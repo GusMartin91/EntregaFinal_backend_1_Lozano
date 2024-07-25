@@ -1,18 +1,18 @@
 import { Router } from "express";
-import productManager from "../productManager.js";
+import productDao from "../daos/product.dao.js";
 import { io } from "../app.js";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const products = await productManager.getProducts();
+  const products = await productDao.getAll();
   res.render("home", { products });
 });
 
 router.get("/realtimeproducts", async (req, res) => {
-  const products = await productManager.getProducts();
+  const products = await productDao.getAll();
   io.on("connection", (socket) => {
-    console.log(`Nuevo cliente conectado en Realtime Products con ID: ${socket.id}`);
+    console.log(`New client connected in Realtime Products with ID: ${socket.id}`);
     socket.emit("products", products);
   });
 
@@ -20,8 +20,8 @@ router.get("/realtimeproducts", async (req, res) => {
 });
 
 router.post("/realtimeproducts", async (req, res) => {
-  await productManager.addProduct(req.body);
-  const products = await productManager.getProducts();
+  await productDao.create(req.body);
+  const products = await productDao.getAll();
   io.emit("products", products);
 
   res.render("realTimeProducts");
@@ -29,8 +29,8 @@ router.post("/realtimeproducts", async (req, res) => {
 
 router.delete("/realtimeproducts", async (req, res) => {
   const { id } = req.body;
-  await productManager.deleteProduct(Number(id));
-  const products = await productManager.getProducts();
+  await productDao.deleteOne(id);
+  const products = await productDao.getAll();
   io.emit("products", products);
   res.render("realTimeProducts");
 });
