@@ -7,7 +7,6 @@ const router = Router();
 router.post("/", async (req, res) => {
   try {
     const cart = await cartDao.create();
-
     res.status(201).json({ status: "ok", cart });
   } catch (error) {
     console.log(error);
@@ -18,10 +17,8 @@ router.post("/", async (req, res) => {
 router.get("/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
-
     const cart = await cartDao.getById(cid);
     if (!cart) return res.status(404).json({ status: "error", msg: "Cart not found" });
-
     res.status(201).json({ status: "ok", cart });
   } catch (error) {
     console.log(error);
@@ -32,9 +29,7 @@ router.get("/:cid", async (req, res) => {
 router.post("/:cid/product/:pid", checkProductAndCart, async (req, res) => {
   try {
     const { cid, pid } = req.params;
-
     const cart = await cartDao.addProductToCart(cid, pid);
-
     res.status(201).json({ status: "ok", cart });
   } catch (error) {
     console.log(error);
@@ -70,9 +65,7 @@ router.delete("/:cid", async (req, res) => {
     const { cid } = req.params;
     const cart = await cartDao.getById(cid);
     if (!cart) return res.status(404).json({ status: "error", msg: "Cart not found" });
-
     const cartResponse = await cartDao.deleteAllProductsInCart(cid);
-
     res.status(201).json({ status: "ok", cart: cartResponse });
   } catch (error) {
     console.log(error);
