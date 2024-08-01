@@ -25,7 +25,7 @@ const addProductToCart = async (cid, pid) => {
 
 const deleteProductInCart = async (cid, pid) => {
     const cart = await cartModel.findById(cid);
-    const productsFilter = cart.products.filter(prod => prod.product.toString() !== pid);
+    const productsFilter = cart.products.filter(prod => prod.product.toString() !== pid);//convierto el id a string, para compararlo con el req.params, que lo toma como string.
     const cartResponse = await cartModel.findByIdAndUpdate(cid, { $set: { products: productsFilter } }, { new: true });
     return cartResponse;
 };
